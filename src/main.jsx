@@ -8,29 +8,8 @@ import Home from "./pages/Home/home.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
 import Login from "./pages/Login/Login.jsx";
 import CreatePost from "./pages/CreatePost/CreatePost.jsx";
+import { router } from "./routes/router.jsx";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App></App>,
-  },
-  {
-    path: "/home",
-    element: <Home></Home>,
-  },
-  {
-    path: "/profile",
-    element: <Profile></Profile>,
-  },
-  {
-    path: "/login",
-    element: <Login></Login>,
-  },
-  {
-    path: "/createpost",
-    element: <CreatePost></CreatePost>,
-  },
-]);
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
