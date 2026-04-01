@@ -41,7 +41,7 @@ const Footer = () => {
 
       {/* Bottom */}
       <div className="border-t border-gray-700 text-center py-4 text-sm">
-        © {new Date().getFullYear()} CP Platform. All rights reserved.
+        © {new Date().getFullYear()} CP Platform.All rights reserved.
       </div>
     </footer>
   );
