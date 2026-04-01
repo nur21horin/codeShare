@@ -36,7 +36,6 @@ const Footer = () => {
             <span className="hover:text-white cursor-pointer">💼</span>
           </div>
         </div>
-
       </div>
 
       {/* Bottom */}
