@@ -11,7 +11,7 @@ const Footer = () => {
           <h2 className="text-xl font-bold text-white">CP Platform</h2>
           <p className="mt-3 text-sm">
             A platform to share competitive programming solutions, discuss
-            algorithms, and improve problem-solving skills.
+            algorithms,and improve problem-solving skills.
           </p>
         </div>
 
