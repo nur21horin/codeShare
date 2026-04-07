@@ -9,7 +9,7 @@ import {
 } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import { auth } from "../../Firebase/Firebase.init";
-import { setUserId } from "firebase/analytics";
+
 import { AuthContext } from "./AuthContext";
 
 const AuthProvider = ({ children }) => {
