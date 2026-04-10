@@ -48,28 +48,35 @@ const Profile = () => {
     );
   }
   //Conver Photo 
- const handleCoverUpload = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+  const handleCoverUpload = async (e) => {
+    const image= e.target.files[0];
+    if (!image) return;
 
-  try {
-    setUploading(true);
-    const storageRef = ref(storage, `covers/${user.uid}`);
-    await uploadBytes(storageRef, file);
-    const url = await getDownloadURL(storageRef);
-    // update Firestore
-    await updateDoc(doc(db, "users", user.uid), {
-      coverPhoto: url,
-    });
-    setCoverPhoto(url);
-    Swal.fire("Success", "Cover photo updated!", "success");
-  } catch (err) {
-    Swal.fire("Error", err.message, "error");
-  } finally {
-    setUploading(false);
-  }
-};
+    const formData= new FormData();
+    formData.append("image", image);
 
+    try{
+      setUploading(true);
+      const res= await fetch(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`,{
+        method: "POST",
+        body: formData,
+      });
+      const data= await res.json();
+
+      if(data.success){
+        const imageUrl= data.data.url;
+        await updateDoc(doc(db, "users", user.uid), {
+          coverPhoto: imageUrl,
+        });
+      }
+      setCoverPhoto(data.data.url);
+      Swal.fire("Success", "Cover photo updated!", "success");
+    } catch (err) {
+      Swal.fire("Error", err.message, "error");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   // ---------------- OPEN EDIT ----------------
   const handleEditOpen = () => {
@@ -168,34 +175,55 @@ const Profile = () => {
     <div className="min-h-screen bg-base-200 p-4 md:p-8">
 
       {/* HERO */}
-      <div className="relative bg-base-100 rounded-2xl shadow-lg overflow-hidden">
+    
+<div className="relative bg-base-100 rounded-2xl shadow-lg overflow-hidden">
 
-        {/* COVER */}
-        <div className="h-48 md:h-64 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+  {/* COVER PHOTO */}
+  <div className="h-48 md:h-64 relative">
 
-        {/* AVATAR */}
-        <div className="absolute left-6 -bottom-12">
-          <img
-            src={photo || user.photoURL || "https://i.ibb.co/2s3zLZP/default-avatar.png"}
-            className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-white object-cover"
-          />
-        </div>
+    <img
+      src={
+        coverPhoto ||
+        "https://images.unsplash.com/photo-1503264116251-35a269479413"
+      }
+      className="w-full h-full object-cover"
+    />
 
-        {/* USER INFO */}
-        <div className="p-6 pt-16 md:pt-20 flex flex-col md:flex-row md:items-center md:justify-between">
+    {/* upload button */}
+    <label className="absolute top-4 right-4 btn btn-sm btn-primary cursor-pointer">
+  {uploading ? "Uploading..." : "Change Cover"}
+  <input
+    type="file"
+    hidden
+    accept="image/*"
+    onChange={handleCoverUpload}
+  />
+</label>
+  </div>
 
-          <div>
-            <h2 className="text-2xl font-bold">
-              {profile?.displayName || user.displayName || "No Name"}
-            </h2>
-            <p className="text-gray-500">{user.email}</p>
-          </div>
+  {/* AVATAR */}
+  <div className="absolute left-6 -bottom-12">
+    <img
+      src={photo || user.photoURL || "https://i.ibb.co/2s3zLZP/default-avatar.png"}
+      className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-white object-cover"
+    />
+  </div>
 
-          <button className="btn btn-primary mt-3 md:mt-0" onClick={handleEditOpen}>
-            Edit Profile
-          </button>
-        </div>
-      </div>
+  {/* USER INFO */}
+  <div className="p-6 pt-16 md:pt-20 flex flex-col md:flex-row md:items-center md:justify-between">
+
+    <div>
+      <h2 className="text-2xl font-bold">
+        {profile?.displayName || user.displayName}
+      </h2>
+      <p className="text-gray-500">{user.email}</p>
+    </div>
+
+    <button className="btn btn-primary mt-3 md:mt-0" onClick={handleEditOpen}>
+      Edit Profile
+    </button>
+  </div>
+</div>
 
       {/* GRID */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
