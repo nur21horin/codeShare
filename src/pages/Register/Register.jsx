@@ -2,8 +2,9 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import { auth } from "../../Firebase/Firebase.init";
+import { auth, db } from "../../Firebase/Firebase.init";
 import Swal from "sweetalert2";
+import { doc, setDoc } from "firebase/firestore";
 
 const Register = () => {
   const {
@@ -48,6 +49,17 @@ const Register = () => {
         displayName: data.name,
         photoURL: imageUrl,
       });
+      await setDoc(doc(db, "users", result.user.uid), {
+  uid: result.user.uid,
+  name: data.name,
+  email: data.email,
+  photoURL: imageUrl || "",
+  bio: "",
+  skills: ["React"],
+  followers: 0,
+  following: 0,
+  createdAt: new Date(),
+});
     }
 
     // 4. Success alert
