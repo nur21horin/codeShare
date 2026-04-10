@@ -3,6 +3,7 @@ import useAuth from "../../hooks/useAuth";
 import { auth, db } from "../../Firebase/Firebase.init";
 import { updateProfile } from "firebase/auth";
 import Swal from "sweetalert2";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import {
   doc,
@@ -16,6 +17,7 @@ import {
 
 const Profile = () => {
   const { user, loading } = useAuth();
+  const storage = getStorage();
 
   const [profile, setProfile] = useState(null);
   const [posts, setPosts] = useState([]);
@@ -45,6 +47,29 @@ const Profile = () => {
       </div>
     );
   }
+  //Conver Photo 
+ const handleCoverUpload = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  try {
+    setUploading(true);
+    const storageRef = ref(storage, `covers/${user.uid}`);
+    await uploadBytes(storageRef, file);
+    const url = await getDownloadURL(storageRef);
+    // update Firestore
+    await updateDoc(doc(db, "users", user.uid), {
+      coverPhoto: url,
+    });
+    setCoverPhoto(url);
+    Swal.fire("Success", "Cover photo updated!", "success");
+  } catch (err) {
+    Swal.fire("Error", err.message, "error");
+  } finally {
+    setUploading(false);
+  }
+};
+
 
   // ---------------- OPEN EDIT ----------------
   const handleEditOpen = () => {
@@ -111,6 +136,7 @@ const Profile = () => {
 
           setName(data.displayName || "");
           setPhoto(data.photoURL || "");
+          setCoverPhoto(data.coverPhoto || "");
           setBio(data.bio || "");
           setSkills(data.skills ? data.skills.join(", ") : "");
         }
