@@ -9,10 +9,14 @@ import Profile from "./pages/Profile/Profile.jsx";
 import Login from "./pages/Login/Login.jsx";
 import CreatePost from "./pages/CreatePost/CreatePost.jsx";
 import { router } from "./routes/router.jsx";
+import AuthProvider from "./context/AuthContext/AuthProvider.jsx";
 
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+  <AuthProvider>
+  <RouterProvider router={router} />
+  </AuthProvider>
+    
   </StrictMode>,
 );
