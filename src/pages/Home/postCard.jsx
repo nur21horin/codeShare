@@ -63,7 +63,7 @@ const PostCard = ({ post }) => {
     }
   };
 
-  // ✅ ADD COMMENT
+  // ADD COMMENT
   const handleComment = async () => {
     if (!commentText) return;
 
@@ -98,7 +98,7 @@ const PostCard = ({ post }) => {
     }
   };
 
-  // ✅ DELETE COMMENT
+  // DELETE COMMENT
   const handleDelete = async (id) => {
     try {
       await fetch(`http://localhost:5000/comments/${id}`, {
@@ -133,18 +133,14 @@ const PostCard = ({ post }) => {
 
       {/* TITLE */}
       <h2 className="text-lg font-bold">{post.problem_name}</h2>
-
-      {/* DESCRIPTION */}
+      {/* DESCRIPTION + IMAGE */}
       <p>{post.description}</p>
-
-      {/* IMAGE */}
       {post.image && (
         <img
           src={post.image}
           className="w-full rounded-lg max-h-96 object-cover"
         />
       )}
-
       {/* TAGS */}
       <div className="flex flex-wrap gap-2">
         {post.tags?.map((tag, i) => (
