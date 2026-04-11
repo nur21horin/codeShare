@@ -1,46 +1,17 @@
 import { useEffect, useState } from "react";
-import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
-
 
 const PostCard = ({ post }) => {
   const { user } = useAuth();
-  const axiosSecure = useAxiosSecure();
-  const [likes, setLikes] = useState(post.likes?.length||0);
-  const [comments,setComments]=useState([]);
-  const [commentText,setCommentText]=useState("");
+
+  const [likes, setLikes] = useState(post?.likes?.length || 0);
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState("");
   const [loading, setLoading] = useState(true);
 
-
-  const handleLike = async () => {
-    try {
-      const res = await fetch(`http://localhost:5000/posts/like/${post._id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          
-        },
-        //body: JSON.stringify({ userId: "dummyUserId" })
-
-      });
-      const result = await res.json();
-
-    if (result.message === "Liked") {
-      setLikes((prev) => prev + 1);
-    } else if (result.message === "Unliked") {
-      setLikes((prev) => Math.max(prev - 1, 0));
-    } else {
-      console.log("Error liking/unliking post:", result.message);
-    }
-      //setLikes(prev => prev + 1);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
- useEffect(() => {
   const fetchComments = async () => {
     try {
+      setLoading(true);
       const res = await fetch(
         `http://localhost:5000/comments/${post._id}`
       );
@@ -49,88 +20,99 @@ const PostCard = ({ post }) => {
     } catch (err) {
       console.log(err);
       setComments([]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  fetchComments();
-}, [post._id]);
+ 
+  useEffect(() => {
+    fetchComments();
+  }, [post._id]);
 
-const fetchComments = async () => {
-  try {
-    setLoading(true);
-    const res = await fetch(
-      `http://localhost:5000/comments/${post._id}`
-    );
-    const data = await res.json();
-    setComments(Array.isArray(data) ? data : []);
-  } catch (err) {
-    console.log(err);
-    setComments([]);
-  } finally {
-    setLoading(false);
-  }
-};
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchComments();
+    }, 5000);
 
-const handleComment = async () => {
-  if (!commentText) return;
+    return () => clearInterval(interval);
+  }, [post._id]);
 
-  try {
-    await fetch("http://localhost:5000/comments", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${await user.getIdToken()}`
-      },
-      body: JSON.stringify({
-        post_id: post._id,
-        text: commentText
-      })
-    });
 
-    setComments((prev) => [
-      {
-        post_id: post._id,
-        text: commentText,
-        user_email: user.email,
-        created_at: new Date()
-      },
-      ...prev
-    ]);
+  const handleLike = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/posts/like/${post._id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    setCommentText("");
-  } catch (err) {
-    console.log(err);
-  }
-};
+      const result = await res.json();
 
-const handleDelete = async (id) => {
-  try {
-    await fetch(`http://localhost:5000/comments/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${await user.getIdToken()}`
+      if (result.message === "Liked") {
+        setLikes((prev) => prev + 1);
+      } else if (result.message === "Unliked") {
+        setLikes((prev) => Math.max(prev - 1, 0));
       }
-    });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-    // update UI instantly
-    setComments((prev) => prev.filter((c) => c._id !== id));
+  // ✅ ADD COMMENT
+  const handleComment = async () => {
+    if (!commentText) return;
 
-  } catch (err) {
-    console.log(err);
-  }
-};
-{loading ? (
-  <p className="text-sm text-gray-400">Loading comments...</p>
-) : comments.length === 0 ? (
-  <p className="text-sm text-gray-400">No comments yet</p>
-) : (
-  comments.map((c, i) => (
-    <div key={i} className="bg-base-200 p-2 rounded">
-      <p className="text-sm">{c.text}</p>
-      <p className="text-xs text-gray-500">{c.user_email}</p>
-    </div>
-  ))
-)}
+    try {
+      await fetch("http://localhost:5000/comments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${await user?.getIdToken()}`,
+        },
+        body: JSON.stringify({
+          post_id: post._id,
+          text: commentText,
+        }),
+      });
+
+      // instant UI update
+      setComments((prev) => [
+        {
+          _id: Date.now(), // temp id
+          post_id: post._id,
+          text: commentText,
+          user_email: user?.email,
+          created_at: new Date(),
+        },
+        ...prev,
+      ]);
+
+      setCommentText("");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // ✅ DELETE COMMENT
+  const handleDelete = async (id) => {
+    try {
+      await fetch(`http://localhost:5000/comments/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${await user?.getIdToken()}`,
+        },
+      });
+
+      setComments((prev) => prev.filter((c) => c._id !== id));
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div className="bg-base-100 shadow-md rounded-xl p-4 space-y-3">
@@ -173,67 +155,70 @@ const handleDelete = async (id) => {
       </div>
 
       {/* ACTIONS */}
-     
       <div className="mt-4 border-t pt-3">
 
-  {/* input */}
-  <div className="flex gap-2">
-  <button
-          onClick={handleLike}
-          className="btn btn-sm btn-outline"
-        >
-          👍 Like ({likes})
-        </button>
-    <input
-      value={commentText}
-      onChange={(e) => setCommentText(e.target.value)}
-      className="input input-bordered w-full"
-      placeholder="Write a comment..."
-    />
+        {/* LIKE + INPUT */}
+        <div className="flex gap-2 items-center">
+          <button
+            onClick={handleLike}
+            className="btn btn-sm btn-outline"
+          >
+            👍 Like ({likes})
+          </button>
 
-    <button
-      onClick={handleComment}
-      className="btn btn-sm btn-primary"
-    >
-      Post
-    </button>
-  </div>
+          <input
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            className="input input-bordered w-full"
+            placeholder="Write a comment..."
+          />
 
-  {/* comment list */}
-  <div className="mt-3 space-y-2">
-    {comments.map((c, i) => (
-      <div key={i} className="bg-base-200 p-2 rounded">
-        <p className="text-sm">{c.text}</p>
-        <p className="text-xs text-gray-500">
-          {c.user_email}
+          <button
+            onClick={handleComment}
+            className="btn btn-sm btn-primary"
+          >
+            Post
+          </button>
+        </div>
+
+        {/* COMMENT COUNT */}
+        <p className="text-sm mt-2 font-semibold">
+          Comments: {comments?.length}
         </p>
-      </div>
-    ))}
-  </div>
-  
 
-</div>
-<div className="mt-3 space-y-2">
-  {comments.map((c, i) => (
-    <div key={i} className="bg-base-200 p-2 rounded flex justify-between items-center">
-      
-      <div>
-        <p className="text-sm">{c.text}</p>
-        <p className="text-xs text-gray-500">{c.user_email}</p>
-      </div>
+        {/* COMMENT LIST */}
+        <div className="mt-3 space-y-2">
+          {loading ? (
+            <p className="text-sm text-gray-400">Loading comments...</p>
+          ) : comments.length === 0 ? (
+            <p className="text-sm text-gray-400">No comments yet</p>
+          ) : (
+            comments.map((c) => (
+              <div
+                key={c._id}
+                className="bg-base-200 p-2 rounded flex justify-between items-center"
+              >
+                <div>
+                  <p className="text-sm">{c.text}</p>
+                  <p className="text-xs text-gray-500">
+                    {c.user_email}
+                  </p>
+                </div>
 
-      {/* show delete only for own comment */}
-      {c.user_email === user.email && (
-        <button
-          onClick={() => handleDelete(c._id)}
-          className="text-red-500 text-xs"
-        >
-          Delete
-        </button>
-      )}
-    </div>
-  ))}
-</div>
+                {c.user_email === user?.email && (
+                  <button
+                    onClick={() => handleDelete(c._id)}
+                    className="text-red-500 text-xs"
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+
+      </div>
     </div>
   );
 };
