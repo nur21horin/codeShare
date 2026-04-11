@@ -7,6 +7,9 @@ const PostCard = ({ post }) => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
   const [likes, setLikes] = useState(post.likes?.length||0);
+  const [comments,setComments]=useState(post.comments?.length||0);
+  const [commentText,setCommentText]=useState("");
+  
 
   const handleLike = async () => {
     try {
