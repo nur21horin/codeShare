@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
 
@@ -7,9 +7,10 @@ const PostCard = ({ post }) => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
   const [likes, setLikes] = useState(post.likes?.length||0);
-  const [comments,setComments]=useState(post.comments?.length||0);
+  const [comments,setComments]=useState([]);
   const [commentText,setCommentText]=useState("");
-  
+  const [loading, setLoading] = useState(true);
+
 
   const handleLike = async () => {
     try {
@@ -36,6 +37,100 @@ const PostCard = ({ post }) => {
       console.log(err);
     }
   };
+
+ useEffect(() => {
+  const fetchComments = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/comments/${post._id}`
+      );
+      const data = await res.json();
+      setComments(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.log(err);
+      setComments([]);
+    }
+  };
+
+  fetchComments();
+}, [post._id]);
+
+const fetchComments = async () => {
+  try {
+    setLoading(true);
+    const res = await fetch(
+      `http://localhost:5000/comments/${post._id}`
+    );
+    const data = await res.json();
+    setComments(Array.isArray(data) ? data : []);
+  } catch (err) {
+    console.log(err);
+    setComments([]);
+  } finally {
+    setLoading(false);
+  }
+};
+
+const handleComment = async () => {
+  if (!commentText) return;
+
+  try {
+    await fetch("http://localhost:5000/comments", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${await user.getIdToken()}`
+      },
+      body: JSON.stringify({
+        post_id: post._id,
+        text: commentText
+      })
+    });
+
+    setComments((prev) => [
+      {
+        post_id: post._id,
+        text: commentText,
+        user_email: user.email,
+        created_at: new Date()
+      },
+      ...prev
+    ]);
+
+    setCommentText("");
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const handleDelete = async (id) => {
+  try {
+    await fetch(`http://localhost:5000/comments/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${await user.getIdToken()}`
+      }
+    });
+
+    // update UI instantly
+    setComments((prev) => prev.filter((c) => c._id !== id));
+
+  } catch (err) {
+    console.log(err);
+  }
+};
+{loading ? (
+  <p className="text-sm text-gray-400">Loading comments...</p>
+) : comments.length === 0 ? (
+  <p className="text-sm text-gray-400">No comments yet</p>
+) : (
+  comments.map((c, i) => (
+    <div key={i} className="bg-base-200 p-2 rounded">
+      <p className="text-sm">{c.text}</p>
+      <p className="text-xs text-gray-500">{c.user_email}</p>
+    </div>
+  ))
+)}
 
   return (
     <div className="bg-base-100 shadow-md rounded-xl p-4 space-y-3">
@@ -78,20 +173,67 @@ const PostCard = ({ post }) => {
       </div>
 
       {/* ACTIONS */}
-      <div className="flex justify-between items-center pt-2 border-t">
+     
+      <div className="mt-4 border-t pt-3">
 
-        <button
+  {/* input */}
+  <div className="flex gap-2">
+  <button
           onClick={handleLike}
           className="btn btn-sm btn-outline"
         >
           👍 Like ({likes})
         </button>
+    <input
+      value={commentText}
+      onChange={(e) => setCommentText(e.target.value)}
+      className="input input-bordered w-full"
+      placeholder="Write a comment..."
+    />
 
-        <button className="btn btn-sm btn-outline">
-          💬 Comment
-        </button>
+    <button
+      onClick={handleComment}
+      className="btn btn-sm btn-primary"
+    >
+      Post
+    </button>
+  </div>
 
+  {/* comment list */}
+  <div className="mt-3 space-y-2">
+    {comments.map((c, i) => (
+      <div key={i} className="bg-base-200 p-2 rounded">
+        <p className="text-sm">{c.text}</p>
+        <p className="text-xs text-gray-500">
+          {c.user_email}
+        </p>
       </div>
+    ))}
+  </div>
+  
+
+</div>
+<div className="mt-3 space-y-2">
+  {comments.map((c, i) => (
+    <div key={i} className="bg-base-200 p-2 rounded flex justify-between items-center">
+      
+      <div>
+        <p className="text-sm">{c.text}</p>
+        <p className="text-xs text-gray-500">{c.user_email}</p>
+      </div>
+
+      {/* show delete only for own comment */}
+      {c.user_email === user.email && (
+        <button
+          onClick={() => handleDelete(c._id)}
+          className="text-red-500 text-xs"
+        >
+          Delete
+        </button>
+      )}
+    </div>
+  ))}
+</div>
     </div>
   );
 };
