@@ -13,6 +13,8 @@ const SocialLogin = () => {
     signInGoogle()
       .then((result) => {
         console.log(result.user);
+        const loggedUser=result.user;
+        
         navigate(location.state || "/");
 
         const userInfo = {

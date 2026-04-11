@@ -7,6 +7,7 @@ import NotFound from "../pages/NotFound/Notfound";
 import SocialLogin from "../pages/Login/SocialLogin";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
+import Logout from "../pages/Logout/Logout";
 
 export const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ export const router = createBrowserRouter([
         path: "register",
         element: <Register></Register>,
       },
+      {
+        path:"logout",
+        Component:Logout
+      }
     ],
     errorElement:<NotFound></NotFound>
   },

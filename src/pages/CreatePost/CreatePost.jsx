@@ -4,16 +4,19 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
 
 const CreatePost = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const axiosSecure = useAxiosSecure();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState("");
   const [image, setImage] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loadingPost, setLoadingPost] = useState(false);
 
-  // Upload image to ImgBB
+  if (loading) {
+    return <p className="text-center mt-10">Loading...</p>;
+  }
+
   const uploadImageToImageBB = async () => {
     if (!image) return "";
 
@@ -29,12 +32,7 @@ const CreatePost = () => {
     );
 
     const data = await res.json();
-
-    if (data.success) {
-      return data.data.url;
-    } else {
-      throw new Error("Image upload failed");
-    }
+    return data.data.url;
   };
 
   const handleSubmit = async (e) => {
@@ -44,37 +42,34 @@ const CreatePost = () => {
       return Swal.fire("Error", "Please login first", "error");
     }
 
-    if (!title || !description) {
-      return Swal.fire("Error", "All fields are required", "error");
-    }
-
     try {
-      setLoading(true);
+      setLoadingPost(true);
 
       let imageUrl = "";
       if (image) {
         imageUrl = await uploadImageToImageBB();
       }
 
-      const tagArray = tags
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean);
-
       const postData = {
         problem_name: title,
         description,
         image: imageUrl,
-        tags: tagArray,
+        tags: tags.split(",").map((t) => t.trim()),
       };
 
-      console.log("Sending post:", postData);
+      //const res = await axiosSecure.post("/posts", postData); 
+      const res=await fetch("http://localhost:5000/posts",{
+        method:"POST",
+        headers:{
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(postData)
+      });
 
-      // ✅ NO manual token needed
-      const res = await axiosSecure.post("/posts", postData);
+      const result = await res.json();
 
-      if (res.data.insertedId) {
-        Swal.fire("Success 🚀", "Post created successfully!", "success");
+      if (result.insertedId) {
+        Swal.fire("Success 🚀", "Post created!", "success");
 
         setTitle("");
         setDescription("");
@@ -85,70 +80,47 @@ const CreatePost = () => {
       console.log(err);
       Swal.fire("Error", err.message, "error");
     } finally {
-      setLoading(false);
+      setLoadingPost(false);
     }
+    console.log("TOKEN:", await user.getIdToken());
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-base-200 p-4">
-      <div className="card w-full max-w-2xl bg-base-100 shadow-xl">
-        <div className="card-body">
+    <div className="min-h-screen flex justify-center items-center">
+      <form onSubmit={handleSubmit} className="w-full max-w-xl space-y-4">
 
-          <h2 className="text-2xl font-bold text-center">
-            🚀 Create New Post
-          </h2>
+        <input
+          className="input input-bordered w-full"
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
 
-          <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+        <textarea
+          className="textarea textarea-bordered w-full"
+          placeholder="Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
 
-            <input
-              type="text"
-              placeholder="Problem Title"
-              className="input input-bordered w-full"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
+        <input
+          className="input input-bordered w-full"
+          placeholder="Tags (comma separated)"
+          value={tags}
+          onChange={(e) => setTags(e.target.value)}
+        />
 
-            <textarea
-              placeholder="Write your problem / solution..."
-              className="textarea textarea-bordered w-full"
-              rows={4}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
+        <input
+          type="file"
+          className="file-input w-full"
+          onChange={(e) => setImage(e.target.files[0])}
+        />
 
-            <input
-              type="text"
-              placeholder="Tags (comma separated)"
-              className="input input-bordered w-full"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-            />
+        <button className="btn btn-primary w-full">
+          {loadingPost ? "Posting..." : "Create Post"}
+        </button>
 
-            <input
-              type="file"
-              className="file-input file-input-bordered w-full"
-              accept="image/*"
-              onChange={(e) => setImage(e.target.files[0])}
-            />
-
-            {image && (
-              <img
-                src={URL.createObjectURL(image)}
-                className="w-full h-48 object-cover rounded-lg"
-              />
-            )}
-
-            <button
-              className="btn btn-primary w-full"
-              disabled={loading}
-            >
-              {loading ? "Posting..." : "Create Post"}
-            </button>
-
-          </form>
-
-        </div>
-      </div>
+      </form>
     </div>
   );
 };
