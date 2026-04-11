@@ -34,10 +34,8 @@ const PostCard = ({ post }) => {
     const interval = setInterval(() => {
       fetchComments();
     }, 5000);
-
     return () => clearInterval(interval);
   }, [post._id]);
-
 
   const handleLike = async () => {
     try {
@@ -50,9 +48,7 @@ const PostCard = ({ post }) => {
           },
         }
       );
-
       const result = await res.json();
-
       if (result.message === "Liked") {
         setLikes((prev) => prev + 1);
       } else if (result.message === "Unliked") {
