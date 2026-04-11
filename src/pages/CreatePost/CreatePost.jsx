@@ -2,6 +2,7 @@ import { useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const CreatePost = () => {
   const { user, loading } = useAuth();
@@ -12,6 +13,7 @@ const CreatePost = () => {
   const [tags, setTags] = useState("");
   const [image, setImage] = useState(null);
   const [loadingPost, setLoadingPost] = useState(false);
+  const navigate = useNavigate();
 
   if (loading) {
     return <p className="text-center mt-10">Loading...</p>;
@@ -61,12 +63,17 @@ const CreatePost = () => {
       const res=await fetch("http://localhost:5000/posts",{
         method:"POST",
         headers:{
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${await user.getIdToken()}`
         },
         body: JSON.stringify(postData)
       });
 
       const result = await res.json();
+      // console.log(result);
+      // const postId=result.insertedId;
+      // navigate(`/posts/${postId}`);
+      navigate("/");
 
       if (result.insertedId) {
         Swal.fire("Success 🚀", "Post created!", "success");
@@ -82,7 +89,7 @@ const CreatePost = () => {
     } finally {
       setLoadingPost(false);
     }
-    console.log("TOKEN:", await user.getIdToken());
+    //console.log("TOKEN:", await user.getIdToken());
   };
 
   return (

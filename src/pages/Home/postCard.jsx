@@ -1,15 +1,34 @@
 import { useState } from "react";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useAuth from "../../hooks/useAuth";
 
 
 const PostCard = ({ post }) => {
+  const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
-  const [likes, setLikes] = useState(post.likes.length);
+  const [likes, setLikes] = useState(post.likes?.length||0);
 
   const handleLike = async () => {
     try {
-      await axiosSecure.patch(`/posts/like/${post._id}`);
-      setLikes(prev => prev + 1); // simple update
+      const res = await fetch(`http://localhost:5000/posts/like/${post._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          
+        },
+        //body: JSON.stringify({ userId: "dummyUserId" })
+
+      });
+      const result = await res.json();
+
+    if (result.message === "Liked") {
+      setLikes((prev) => prev + 1);
+    } else if (result.message === "Unliked") {
+      setLikes((prev) => Math.max(prev - 1, 0));
+    } else {
+      console.log("Error liking/unliking post:", result.message);
+    }
+      //setLikes(prev => prev + 1);
     } catch (err) {
       console.log(err);
     }
