@@ -40,7 +40,7 @@ export const router = createBrowserRouter([
       },{
   path: "/post/:id",
   element: <PostDetails />
-}
+},
     ],
     errorElement:<NotFound></NotFound>
   },

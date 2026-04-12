@@ -96,6 +96,8 @@ const CreatePost = () => {
     <div className="min-h-screen flex justify-center items-center">
       <form onSubmit={handleSubmit} className="w-full max-w-xl space-y-4">
 
+      
+
         <input
           className="input input-bordered w-full"
           placeholder="Title"
