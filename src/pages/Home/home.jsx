@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import PostCard from "./postCard";
 import CreatePostBox from "./createPostBox";
+import CardSkeleton from "../../components/CardSekelton/CardSkeleton";
 
 
 
@@ -20,11 +21,15 @@ const Home = () => {
   }, []);
 
   if (loading) {
-    return <p className="text-center mt-10">Loading...</p>;
+    return <CardSkeleton></CardSkeleton>
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-6 space-y-6">
+    <div className=" mx-auto py-6 px-6 space-y-6 grid gap-6 
+  grid-cols-1 
+  sm:grid-cols-2 
+  md:grid-cols-3 
+  lg:grid-cols-4">
       {posts.map(post => (
         <PostCard key={post._id} post={post} />
       ))}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
+import { Link } from "react-router-dom";
 
 const PostCard = ({ post }) => {
   const { user } = useAuth();
@@ -57,7 +58,6 @@ const PostCard = ({ post }) => {
     }
   };
 
-  // ADD COMMENT
   const handleComment = async () => {
     if (!commentText) return;
 
@@ -74,10 +74,9 @@ const PostCard = ({ post }) => {
         }),
       });
 
-      // instant UI update
       setComments((prev) => [
         {
-          _id: Date.now(), // temp id
+          _id: Date.now(),
           post_id: post._id,
           text: commentText,
           user_email: user?.email,
@@ -92,7 +91,6 @@ const PostCard = ({ post }) => {
     }
   };
 
-  // DELETE COMMENT
   const handleDelete = async (id) => {
     try {
       await fetch(`http://localhost:5000/comments/${id}`, {
@@ -109,103 +107,87 @@ const PostCard = ({ post }) => {
   };
 
   return (
-    <div className="bg-base-100 shadow-md rounded-xl p-4 space-y-3">
+    <div className="bg-base-100 shadow-md rounded-2xl overflow-hidden flex flex-col h-[500px]">
 
-      {/* USER INFO */}
-      <div className="flex items-center gap-3">
-        <img
-          src={post.user_photo || "https://i.ibb.co/2kR6z6n/user.png"}
-          className="w-10 h-10 rounded-full"
-        />
-        <div>
-          <h3 className="font-semibold">{post.user_name}</h3>
-          <p className="text-xs text-gray-500">
-            {new Date(post.created_at).toLocaleString()}
-          </p>
-        </div>
-      </div>
+      {/* IMAGE */}
+      <img
+        src={post.image || "https://i.ibb.co/2kR6z6n/user.png"}
+        className="w-full h-40 object-cover"
+      />
 
-      {/* TITLE */}
-      <h2 className="text-lg font-bold">{post.problem_name}</h2>
-      {/* DESCRIPTION + IMAGE */}
-      <p>{post.description}</p>
-      {post.image && (
-        <img
-          src={post.image}
-          className="w-full rounded-lg max-h-96 object-cover"
-        />
-      )}
-      {/* TAGS */}
-      <div className="flex flex-wrap gap-2">
-        {post.tags?.map((tag, i) => (
-          <span key={i} className="badge badge-outline">
-            #{tag}
-          </span>
-        ))}
-      </div>
+      <div className="p-4 flex flex-col flex-grow">
 
-      {/* ACTIONS */}
-      <div className="mt-4 border-t pt-3">
-
-        {/* LIKE + INPUT */}
-        <div className="flex gap-2 items-center">
-          <button
-            onClick={handleLike}
-            className="btn btn-sm btn-outline"
-          >
-            👍 Like ({likes})
-          </button>
-
-          <input
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            className="input input-bordered w-full"
-            placeholder="Write a comment..."
+        {/* USER INFO */}
+        <div className="flex items-center gap-2 mb-2">
+          <img
+            src={post.user_photo || "https://i.ibb.co/2kR6z6n/user.png"}
+            className="w-8 h-8 rounded-full"
           />
-
-          <button
-            onClick={handleComment}
-            className="btn btn-sm btn-primary"
-          >
-            Post
-          </button>
+          <div>
+            <h3 className="text-sm font-semibold">{post.user_name}</h3>
+            <p className="text-xs text-gray-400">
+              {new Date(post.created_at).toLocaleDateString()}
+            </p>
+          </div>
         </div>
 
-        {/* COMMENT COUNT */}
-        <p className="text-sm mt-2 font-semibold">
-          Comments: {comments?.length}
+        {/* TITLE */}
+        <h2 className="font-bold text-lg line-clamp-1">
+          {post.problem_name}
+        </h2>
+
+        {/* DESCRIPTION */}
+        <p className="text-sm text-gray-600 line-clamp-2 mt-1">
+          {post.description}
         </p>
 
-        {/* COMMENT LIST */}
-        <div className="mt-3 space-y-2">
-          {loading ? (
-            <p className="text-sm text-gray-400">Loading comments...</p>
-          ) : comments.length === 0 ? (
-            <p className="text-sm text-gray-400">No comments yet</p>
-          ) : (
-            comments.map((c) => (
-              <div
-                key={c._id}
-                className="bg-base-200 p-2 rounded flex justify-between items-center"
-              >
-                <div>
-                  <p className="text-sm">{c.text}</p>
-                  <p className="text-xs text-gray-500">
-                    {c.user_email}
-                  </p>
-                </div>
+        {/* TAGS */}
+        <div className="flex flex-wrap gap-1 mt-2">
+          {post.tags?.slice(0, 3).map((tag, i) => (
+            <span key={i} className="badge badge-outline text-xs">
+              #{tag}
+            </span>
+          ))}
+        </div>
 
-                {c.user_email === user?.email && (
-                  <button
-                    onClick={() => handleDelete(c._id)}
-                    className="text-red-500 text-xs"
-                  >
-                    Delete
-                  </button>
-                )}
-              </div>
-            ))
-          )}
+        {/* META */}
+        <div className="text-xs text-gray-500 mt-2">
+          👍 {likes} Likes • 💬 {comments.length} Comments
+        </div>
+
+        {/* ACTIONS */}
+        <div className="mt-auto space-y-2">
+
+          {/* LIKE + COMMENT */}
+          <div className="flex gap-2 items-center">
+            <button
+              onClick={handleLike}
+              className="btn btn-xs btn-outline"
+            >
+              👍 Like
+            </button>
+
+            <input
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              className="input input-bordered input-xs w-full"
+              placeholder="Comment..."
+            />
+
+            <button
+              onClick={handleComment}
+              className="btn btn-xs btn-primary"
+            >
+              Post
+            </button>
+          </div>
+
+          {/* VIEW DETAILS BUTTON */}
+          <Link to={`/post/${post._id}`}>
+            <button className="btn btn-sm btn-primary w-full">
+              View Details
+            </button>
+          </Link>
         </div>
       </div>
     </div>

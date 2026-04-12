@@ -38,9 +38,9 @@ export const router = createBrowserRouter([
         path:"logout",
         Component:Logout
       },{
-          path:"/post/:id",
-          Componet:PostDetails
-        }
+  path: "/post/:id",
+  element: <PostDetails />
+}
     ],
     errorElement:<NotFound></NotFound>
   },
