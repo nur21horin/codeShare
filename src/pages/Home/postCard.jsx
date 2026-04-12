@@ -3,7 +3,6 @@ import useAuth from "../../hooks/useAuth";
 
 const PostCard = ({ post }) => {
   const { user } = useAuth();
-
   const [likes, setLikes] = useState(post?.likes?.length || 0);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
@@ -25,7 +24,6 @@ const PostCard = ({ post }) => {
     }
   };
 
- 
   useEffect(() => {
     fetchComments();
   }, [post._id]);
