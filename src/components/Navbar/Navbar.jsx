@@ -11,6 +11,9 @@ const Navbar = () => {
         <Link to="/">Home</Link>
         <Link to="/createpost">Create</Link>
         <Link to="/profile">Profile</Link>
+        <Link to="/about">About</Link>
+        <Link to="/help">Help</Link>
+        <Link to="/contact">Contact</Link>
        {user ? <Link to="/logout">Logout</Link> : <Link to="/login">Login</Link>}
       </div>
     </div>

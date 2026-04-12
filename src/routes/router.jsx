@@ -9,6 +9,7 @@ import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import Logout from "../pages/Logout/Logout";
 import PostDetails from "../components/PostDetails/PostDetails";
+import Contact from "../components/Contacts/Contacts";
 
 export const router = createBrowserRouter([
   {
@@ -38,9 +39,14 @@ export const router = createBrowserRouter([
         path:"logout",
         Component:Logout
       },{
-  path: "/post/:id",
-  element: <PostDetails />
-},
+        path: "/post/:id",
+        element: <PostDetails />
+      },
+      {
+        path:"contact",
+        element:<Contact></Contact>
+      }
+
     ],
     errorElement:<NotFound></NotFound>
   },
