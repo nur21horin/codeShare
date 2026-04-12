@@ -8,6 +8,7 @@ import SocialLogin from "../pages/Login/SocialLogin";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import Logout from "../pages/Logout/Logout";
+import PostDetails from "../components/PostDetails/PostDetails";
 
 export const router = createBrowserRouter([
   {
@@ -36,7 +37,10 @@ export const router = createBrowserRouter([
       {
         path:"logout",
         Component:Logout
-      }
+      },{
+          path:"/post/:id",
+          Componet:PostDetails
+        }
     ],
     errorElement:<NotFound></NotFound>
   },
