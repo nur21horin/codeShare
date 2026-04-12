@@ -10,6 +10,10 @@ import Register from "../pages/Register/Register";
 import Logout from "../pages/Logout/Logout";
 import PostDetails from "../components/PostDetails/PostDetails";
 import Contact from "../components/Contacts/Contacts";
+import About from "../components/About/About";
+import Help from "../components/Help/Help";
+import FaqDetails from "../components/Help/Faq/FaqDetails";
+import Faq from "../components/Help/Faq/Faq";
 
 export const router = createBrowserRouter([
   {
@@ -45,6 +49,24 @@ export const router = createBrowserRouter([
       {
         path:"contact",
         element:<Contact></Contact>
+      },{
+        path:"about",
+        element:<About></About>
+      },{
+        path:"help",
+        element:<Help></Help>
+      },
+      {
+        path: "/help",
+        element: <Help />
+      },
+      {
+        path: "/faq",
+        element: <Faq />
+      },
+      {
+        path: "/faq/:id",
+        element: <FaqDetails />
       }
 
     ],
