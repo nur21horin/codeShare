@@ -63,7 +63,7 @@ const CreatePost = () => {
         tags: tags.split(",").map((t) => t.trim()),
       };
 
-      const res = await fetch("http://localhost:5000/posts", {
+      const res = await fetch("https://codesharebackend-kkeh.onrender.com/posts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

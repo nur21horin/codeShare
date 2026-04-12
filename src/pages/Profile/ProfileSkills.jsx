@@ -15,7 +15,7 @@ const ProfileSkills = () => {
       if (!user) return;
 
       const res = await fetch(
-        `http://localhost:5000/users/${user.email}`,
+        `https://codesharebackend-kkeh.onrender.com/users/${user.email}`,
         {
           headers: {
             Authorization: `Bearer ${await user.getIdToken()}`,
@@ -47,7 +47,7 @@ const ProfileSkills = () => {
       }))
       .filter((s) => s.name);
 
-    await fetch("http://localhost:5000/users/profile", {
+    await fetch("https://codesharebackend-kkeh.onrender.com/users/profile", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

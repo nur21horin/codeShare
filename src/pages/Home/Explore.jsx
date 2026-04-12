@@ -18,7 +18,7 @@ const Explore = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/posts/explore?search=${search}&tag=${tag}&dateSort=${dateSort}&sortBy=${sortBy}`
+        `https://codesharebackend-kkeh.onrender.com/posts/explore?search=${search}&tag=${tag}&dateSort=${dateSort}&sortBy=${sortBy}`
       );
 
       const data = await res.json();

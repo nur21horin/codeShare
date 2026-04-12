@@ -10,7 +10,7 @@ const PostDetails = () => {
   useEffect(() => {
     setLoading(true);
 
-    fetch(`http://localhost:5000/posts/${id}`)
+    fetch(`https://codesharebackend-kkeh.onrender.com/posts/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setPost(data);
