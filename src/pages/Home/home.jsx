@@ -19,6 +19,10 @@ const Home = () => {
 
   const [notFound, setNotFound] = useState(false);
 
+  const [sortBy, setSortBy] = useState("newest");
+  const [tag, setTag] = useState("");
+  const [dateSort, setDateSort] = useState("");
+
   // debounce search
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -28,14 +32,23 @@ const Home = () => {
     return () => clearTimeout(timeout);
   }, [search]);
 
-  // fetch posts (FIXED)
+  // fetch posts
   useEffect(() => {
     const fetchPosts = async () => {
       setLoading(true);
 
       try {
+        const query = new URLSearchParams({
+          page,
+          limit: 8,
+          search: debouncedSearch,
+          sortBy,
+          tag,
+          dateSort,
+        });
+
         const res = await fetch(
-          `http://localhost:5000/posts?page=${page}&limit=8&search=${debouncedSearch}`
+          `http://localhost:5000/posts?${query.toString()}`
         );
 
         const data = await res.json();
@@ -56,32 +69,43 @@ const Home = () => {
     };
 
     fetchPosts();
-  }, [page, debouncedSearch]);
+  }, [page, debouncedSearch, sortBy, tag, dateSort]);
 
   if (loading) return <CardSkeleton />;
 
   return (
     <div>
 
-      {/* SEARCH UI */}
+      {/* SEARCH */}
       <CreatePostBox
         search={search}
         setSearch={(value) => {
-          setPage(1);      // reset page on search
+          setPage(1);
           setSearch(value);
         }}
         setPage={setPage}
         loading={loading}
       />
 
+      {/* SORT */}
+      <select
+        value={sortBy}
+        onChange={(e) => {
+          setSortBy(e.target.value);
+          setPage(1);
+        }}
+        className="select select-bordered w-full my-2"
+      >
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="popular">Most Popular</option>
+        <option value="trending">Trending</option>
+      </select>
+
       {/* EMPTY STATE */}
       {notFound && !loading && (
         <div className="text-center py-12">
-          <div className="text-5xl mb-3">🔍</div>
-          <h2 className="text-xl font-semibold">No posts found</h2>
-          <p className="text-gray-500 mt-2">
-            Try different keywords
-          </p>
+          🔍 No posts found
         </div>
       )}
 
