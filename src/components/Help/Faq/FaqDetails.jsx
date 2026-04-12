@@ -10,17 +10,17 @@ const faqData = {
   2: {
     question: "How can I delete my post?",
     answer:
-      "Open your post and click delete button. Only owner can delete it.",
+      "Open your post and click delete button. Only the owner of the post can delete it.",
   },
   3: {
     question: "Why is my post not showing?",
     answer:
-      "Refresh the page or check internet connection. If still not visible, try login again.",
+      "Refresh the page or check your internet connection. If still not visible, try logging in again.",
   },
   4: {
     question: "How to contact support?",
     answer:
-      "Go to contact page and send a message. We reply within 24 hours.",
+      "Go to the contact page and send a message. Our support team replies within 24 hours.",
   },
 };
 
@@ -30,31 +30,41 @@ const FaqDetails = () => {
 
   if (!faq) {
     return (
-      <div className="p-6 text-center">
-        <h2 className="text-xl font-bold">Question not found</h2>
+      <div className="min-h-screen flex items-center justify-center bg-base-200 px-4">
+        <div className="bg-base-100 p-6 rounded-2xl shadow text-center border border-base-300">
+          <h2 className="text-xl font-bold text-error">Question not found</h2>
+          <Link to="/faq" className="btn btn-primary mt-4 w-full">
+            Back to FAQ
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-base-200 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-base-200 flex items-center justify-center px-4 py-10 transition-colors duration-300">
 
-      <div className="max-w-xl w-full bg-base-100 shadow-xl rounded-2xl p-6">
+      <div className="max-w-xl w-full bg-base-100 shadow-xl rounded-2xl p-6 border border-base-300">
 
-        <h1 className="text-xl font-bold mb-4">
+        {/* QUESTION */}
+        <h1 className="text-2xl font-bold text-primary mb-4 flex items-start gap-2">
           ❓ {faq.question}
         </h1>
 
-        <p className="text-gray-600 mb-6">
+        {/* ANSWER */}
+        <p className="text-base-content/70 leading-relaxed mb-6">
           {faq.answer}
         </p>
 
-        <Link to="/faq" className="btn btn-primary w-full">
-          Back to FAQ
+        {/* BACK BUTTON */}
+        <Link
+          to="/faq"
+          className="btn btn-primary w-full hover:scale-[1.02] transition-transform"
+        >
+          ← Back to FAQ
         </Link>
 
       </div>
-
     </div>
   );
 };
