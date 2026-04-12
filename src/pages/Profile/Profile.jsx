@@ -31,6 +31,49 @@ const Profile = () => {
   const [bio, setBio] = useState("");
   const [skills, setSkills] = useState("");
 
+  // ---------------- FETCH DATA ----------------
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!user) return;
+
+      try {
+        // PROFILE
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setProfile(data);
+
+          setName(data.displayName || "");
+          setPhoto(data.photoURL || "");
+          setCoverPhoto(data.coverPhoto || "");
+          setBio(data.bio || "");
+          setSkills(data.skills ? data.skills.join(", ") : "");
+        }
+
+        // POSTS
+        const q = query(
+          collection(db, "posts"),
+          where("authorId", "==", user.uid)
+        );
+
+        const snap = await getDocs(q);
+
+        setPosts(
+          snap.docs.map((d) => ({
+            id: d.id,
+            ...d.data(),
+          }))
+        );
+      } catch (err) {
+        console.log(err.message);
+      }
+    };
+
+    fetchData();
+  }, [user]);
+
   // ---------------- LOADING ----------------
   if (loading) {
     return (
@@ -126,49 +169,6 @@ const Profile = () => {
       Swal.fire("Error", err.message, "error");
     }
   };
-
-  // ---------------- FETCH DATA ----------------
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!user) return;
-
-      try {
-        // PROFILE
-        const docRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setProfile(data);
-
-          setName(data.displayName || "");
-          setPhoto(data.photoURL || "");
-          setCoverPhoto(data.coverPhoto || "");
-          setBio(data.bio || "");
-          setSkills(data.skills ? data.skills.join(", ") : "");
-        }
-
-        // POSTS
-        const q = query(
-          collection(db, "posts"),
-          where("authorId", "==", user.uid)
-        );
-
-        const snap = await getDocs(q);
-
-        setPosts(
-          snap.docs.map((d) => ({
-            id: d.id,
-            ...d.data(),
-          }))
-        );
-      } catch (err) {
-        console.log(err.message);
-      }
-    };
-
-    fetchData();
-  }, [user]);
 
   // ---------------- UI ----------------
   return (
