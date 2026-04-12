@@ -1,22 +1,26 @@
 import { useState } from "react";
 import useAuth from "../../hooks/useAuth";
-import useAxiosSecure from "../../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const CreatePost = () => {
   const { user, loading } = useAuth();
-  const axiosSecure = useAxiosSecure();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState("");
   const [image, setImage] = useState(null);
   const [loadingPost, setLoadingPost] = useState(false);
+
   const navigate = useNavigate();
 
   if (loading) {
-    return <p className="text-center mt-10">Loading...</p>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-base-200">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    );
   }
 
   const uploadImageToImageBB = async () => {
@@ -59,29 +63,28 @@ const CreatePost = () => {
         tags: tags.split(",").map((t) => t.trim()),
       };
 
-      //const res = await axiosSecure.post("/posts", postData); 
-      const res=await fetch("http://localhost:5000/posts",{
-        method:"POST",
-        headers:{
+      const res = await fetch("http://localhost:5000/posts", {
+        method: "POST",
+        headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${await user.getIdToken()}`
+          Authorization: `Bearer ${await user.getIdToken()}`,
         },
-        body: JSON.stringify(postData)
+        body: JSON.stringify(postData),
       });
 
       const result = await res.json();
-      // console.log(result);
-      // const postId=result.insertedId;
-      // navigate(`/posts/${postId}`);
-      navigate("/");
 
       if (result.insertedId) {
-        Swal.fire("Success 🚀", "Post created!", "success");
+        Swal.fire("Success 🚀", "Post created successfully!", "success");
 
         setTitle("");
         setDescription("");
         setTags("");
         setImage(null);
+
+        navigate("/");
+      } else {
+        Swal.fire("Error", "Failed to create post", "error");
       }
     } catch (err) {
       console.log(err);
@@ -89,47 +92,79 @@ const CreatePost = () => {
     } finally {
       setLoadingPost(false);
     }
-    //console.log("TOKEN:", await user.getIdToken());
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center">
-      <form onSubmit={handleSubmit} className="w-full max-w-xl space-y-4">
+    <div className="min-h-screen bg-base-200 flex items-center justify-center px-4 py-10">
 
-      
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-2xl bg-base-100 shadow-xl rounded-2xl p-6 border border-base-300"
+      >
 
-        <input
-          className="input input-bordered w-full"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
+        {/* HEADER */}
+        <h1 className="text-2xl font-bold text-center text-primary mb-6">
+          Create CP Solution Post 🚀
+        </h1>
 
-        <textarea
-          className="textarea textarea-bordered w-full"
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
+        {/* FORM */}
+        <form onSubmit={handleSubmit} className="space-y-4">
 
-        <input
-          className="input input-bordered w-full"
-          placeholder="Tags (comma separated)"
-          value={tags}
-          onChange={(e) => setTags(e.target.value)}
-        />
+          {/* TITLE */}
+          <input
+            className="input input-bordered w-full"
+            placeholder="Problem Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
 
-        <input
-          type="file"
-          className="file-input w-full"
-          onChange={(e) => setImage(e.target.files[0])}
-        />
+          {/* DESCRIPTION */}
+          <textarea
+            className="textarea textarea-bordered w-full h-32"
+            placeholder="Explain your solution / approach..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
 
-        <button className="btn btn-primary w-full">
-          {loadingPost ? "Posting..." : "Create Post"}
-        </button>
+          {/* TAGS */}
+          <input
+            className="input input-bordered w-full"
+            placeholder="Tags (e.g. dp, graph, greedy)"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+          />
 
-      </form>
+          {/* IMAGE */}
+          <input
+            type="file"
+            className="file-input file-input-bordered w-full"
+            onChange={(e) => setImage(e.target.files[0])}
+          />
+
+          {/* PREVIEW CARD */}
+          <div className="p-4 bg-base-200 rounded-xl text-sm text-base-content/70">
+            💡 Tip: Add clear explanation, edge cases, and optimized approach.
+          </div>
+
+          {/* BUTTON */}
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            disabled={loadingPost}
+            className="btn btn-primary w-full"
+          >
+            {loadingPost ? (
+              <span className="loading loading-spinner loading-sm"></span>
+            ) : (
+              "Publish Post"
+            )}
+          </motion.button>
+
+        </form>
+
+      </motion.div>
     </div>
   );
 };

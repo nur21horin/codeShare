@@ -14,9 +14,9 @@ const Navbar = () => {
       <div className="flex justify-between items-center px-4 py-3">
 
         {/* LOGO */}
-        <h1 className="text-lg font-bold text-primary">
-          CP Platform
-        </h1>
+        <Link to="/" className="text-xl font-bold text-primary">
+          CodeShare
+        </Link>
 
         {/* DESKTOP MENU */}
         <div className="hidden md:flex gap-6 items-center text-sm text-text">
@@ -33,6 +33,13 @@ const Navbar = () => {
           <div className="ml-2 px-3 py-1 rounded-full bg-secondary text-white text-xs">
             {user ? user.displayName : "Guest"}
           </div>
+          {user ? (
+              <div className="ml-2 px-3 py-1 rounded-full bg-secondary text-white text-xs">
+                <Link onClick={() => setOpen(false)} to="/logout">Logout</Link>
+              </div>
+            ) : (
+              <Link className="ml-2 px-3 py-1 rounded-full bg-secondary text-white text-xs" to="/login">Login</Link>
+            )}
 
         </div>
 
@@ -55,13 +62,24 @@ const Navbar = () => {
           <Link onClick={() => setOpen(false)} to="/about">About</Link>
           <Link onClick={() => setOpen(false)} to="/help">Help</Link>
           <Link onClick={() => setOpen(false)} to="/contact">Contact</Link>
-
+          {user ? (
+            <Link onClick={() => setOpen(false)} to="/profile">Profile</Link>
+          ) : (
+            <Link onClick={() => setOpen(false)} to="/login">Login</Link>
+          )}
+          
           <div className="pt-2 flex justify-between items-center">
             <ThemeToggle />
 
             <span className="text-xs text-muted">
-              {user ? user.email : "Not logged in"}
+              {user ? user.email  : "Not logged in"}
+
             </span>
+            {user && (
+              <div className="ml-2 px-3 py-1 rounded-full bg-secondary text-white text-xs">
+                <Link onClick={() => setOpen(false)} to="/logout">Logout</Link>
+              </div>
+            )}
           </div>
 
         </div>

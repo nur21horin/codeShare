@@ -4,6 +4,7 @@ import { auth, db } from "../../Firebase/Firebase.init";
 import { updateProfile } from "firebase/auth";
 import Swal from "sweetalert2";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { motion, AnimatePresence } from "framer-motion";
 
 import {
   doc,
@@ -14,6 +15,8 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
+import ProfileInfo from "./ProfileInfor";
+import ProfileSkills from "./ProfileSkills";
 
 const Profile = () => {
   const { user, loading } = useAuth();
@@ -172,123 +175,139 @@ const Profile = () => {
 
   // ---------------- UI ----------------
   return (
-    <div className="min-h-screen bg-base-200 p-4 md:p-8">
+  <div className="min-h-screen bg-base-200 p-4 md:p-8 text-base-content">
 
-      {/* HERO */}
-    
-<div className="relative bg-base-100 rounded-2xl shadow-lg overflow-hidden">
+    {/* HERO CARD */}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="relative bg-base-100 rounded-2xl shadow-xl overflow-hidden"
+    >
 
-  {/* COVER PHOTO */}
-  <div className="h-48 md:h-64 relative">
+      {/* COVER */}
+      <div className="h-44 md:h-64 relative">
+        <img
+          src={
+            coverPhoto ||
+            "https://images.unsplash.com/photo-1503264116251-35a269479413"
+          }
+          className="w-full h-full object-cover"
+        />
 
-    <img
-      src={
-        coverPhoto ||
-        "https://images.unsplash.com/photo-1503264116251-35a269479413"
-      }
-      className="w-full h-full object-cover"
-    />
+        {/* upload */}
+        <label className="absolute top-4 right-4 btn btn-sm btn-primary">
+          {uploading ? "Uploading..." : "Cover"}
+          <input
+            type="file"
+            hidden
+            accept="image/*"
+            onChange={handleCoverUpload}
+          />
+        </label>
+      </div>
 
-    {/* upload button */}
-    <label className="absolute top-4 right-4 btn btn-sm btn-primary cursor-pointer">
-  {uploading ? "Uploading..." : "Change Cover"}
-  <input
-    type="file"
-    hidden
-    accept="image/*"
-    onChange={handleCoverUpload}
-  />
-</label>
-  </div>
+      {/* AVATAR */}
+      <div className="absolute left-6 -bottom-12">
+        <img
+          src={
+            photo ||
+            user.photoURL ||
+            "https://i.ibb.co/2s3zLZP/default-avatar.png"
+          }
+          className="w-24 h-24 md:w-28 md:h-28 rounded-full border-4 border-base-100 object-cover"
+        />
+      </div>
 
-  {/* AVATAR */}
-  <div className="absolute left-6 -bottom-12">
-    <img
-      src={photo || user.photoURL || "https://i.ibb.co/2s3zLZP/default-avatar.png"}
-      className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-white object-cover"
-    />
-  </div>
+      {/* INFO */}
+      <div className="p-6 pt-16 md:pt-20 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
 
-  {/* USER INFO */}
-  <div className="p-6 pt-16 md:pt-20 flex flex-col md:flex-row md:items-center md:justify-between">
+        <div>
+          <h2 className="text-2xl font-bold">
+            {profile?.displayName || user.displayName}
+          </h2>
+          <p className="text-sm text-base-content/60">{user.email}</p>
+        </div>
 
-    <div>
-      <h2 className="text-2xl font-bold">
-        {profile?.displayName || user.displayName}
-      </h2>
-      <p className="text-gray-500">{user.email}</p>
+        <button onClick={handleEditOpen} className="btn btn-primary">
+          Edit Profile
+        </button>
+
+      </div>
+    </motion.div>
+
+    {/* GRID SECTION */}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+
+      <ProfileInfo profile={profile} />
+      {/* <ProfileSkills profile={profile} />  */}
+
+      {/* STATS */}
+      <div className="stats shadow bg-base-100 w-full">
+
+        <div className="stat">
+          <div className="stat-title">Followers</div>
+          <div className="stat-value text-primary">
+            {profile?.followers?.length || 0}
+          </div>
+        </div>
+
+        <div className="stat">
+          <div className="stat-title">Following</div>
+          <div className="stat-value text-secondary">
+            {profile?.following?.length || 0}
+          </div>
+        </div>
+
+      </div>
+
+      
+      
+
     </div>
 
-    <button className="btn btn-primary mt-3 md:mt-0" onClick={handleEditOpen}>
-      Edit Profile
-    </button>
-  </div>
-</div>
+    {/* POSTS */}
+    <div className="mt-8 card bg-base-100 shadow-md">
+      <div className="card-body">
+        <h3 className="text-lg font-semibold">My Posts</h3>
 
-      {/* GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-
-        {/* BIO */}
-        <div className="card bg-base-100 shadow p-4">
-          <h3 className="font-bold mb-2">Bio</h3>
-          <p>{profile?.bio || "No bio yet"}</p>
-        </div>
-
-        {/* STATS */}
-        <div className="stats shadow bg-base-100">
-
-          <div className="stat">
-            <div className="stat-title">Followers</div>
-            <div className="stat-value">{profile?.followers?.length || 0}</div>
-          </div>
-
-          <div className="stat">
-            <div className="stat-title">Following</div>
-            <div className="stat-value">{profile?.following?.length || 0}</div>
-          </div>
-
-        </div>
-
-        {/* SKILLS */}
-        <div className="card bg-base-100 shadow p-4">
-          <h3 className="font-bold mb-2">Skills</h3>
-
-          <div className="flex flex-wrap gap-2">
-            {(profile?.skills || []).map((s, i) => (
-              <span key={i} className="badge badge-outline">
-                {s}
-              </span>
+        {posts.length === 0 ? (
+          <p className="text-base-content/60">No posts yet 😴</p>
+        ) : (
+          <div className="space-y-3 mt-3">
+            {posts.map((post) => (
+              <div
+                key={post.id}
+                className="p-3 rounded-lg border border-base-300"
+              >
+                <p className="text-sm">{post.text}</p>
+              </div>
             ))}
           </div>
-        </div>
+        )}
+
       </div>
+    </div>
 
-      {/* POSTS */}
-      <div className="mt-8 card bg-base-100 shadow">
-        <div className="card-body">
-          <h3 className="text-lg font-semibold">My Posts</h3>
-
-          {posts.length === 0 ? (
-            <p className="text-gray-500">Nothing here yet 😴</p>
-          ) : (
-            <div className="space-y-3 mt-4">
-              {posts.map((post) => (
-                <div key={post.id} className="p-3 border rounded-lg">
-                  <p>{post.text}</p>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* EDIT MODAL */}
+    {/* MODAL */}
+    <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
+        >
 
-          <div className="bg-white w-[90%] max-w-md p-6 rounded-xl space-y-4">
+          <motion.div
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0.9 }}
+            className="bg-base-100 w-full max-w-md rounded-xl p-6 space-y-4 shadow-xl"
+          >
 
-            <h2 className="text-xl font-bold text-center">Edit Profile</h2>
+            <h2 className="text-xl font-bold text-center">
+              Edit Profile
+            </h2>
 
             <input
               className="input input-bordered w-full"
@@ -304,8 +323,8 @@ const Profile = () => {
               placeholder="Photo URL"
             />
 
-            <input
-              className="input input-bordered w-full"
+            <textarea
+              className="textarea textarea-bordered w-full"
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               placeholder="Bio"
@@ -318,14 +337,7 @@ const Profile = () => {
               placeholder="Skills (comma separated)"
             />
 
-            <div className="flex justify-center">
-              <img
-                src={photo || "https://i.ibb.co/2s3zLZP/default-avatar.png"}
-                className="w-20 h-20 rounded-full object-cover"
-              />
-            </div>
-
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-2 pt-2">
               <button className="btn" onClick={() => setOpen(false)}>
                 Cancel
               </button>
@@ -335,12 +347,13 @@ const Profile = () => {
               </button>
             </div>
 
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+    </AnimatePresence>
 
-    </div>
-  );
+  </div>
+);
 };
 
 export default Profile;
