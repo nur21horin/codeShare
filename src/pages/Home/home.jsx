@@ -23,20 +23,18 @@ const Home = () => {
   const [tag, setTag] = useState("");
   const [dateSort, setDateSort] = useState("");
 
-  // debounce search
+  // debounce
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearch(search);
     }, 500);
-
     return () => clearTimeout(timeout);
   }, [search]);
 
-  // fetch posts
+  // fetch
   useEffect(() => {
     const fetchPosts = async () => {
       setLoading(true);
-
       try {
         const query = new URLSearchParams({
           page,
@@ -57,7 +55,6 @@ const Home = () => {
 
         setPosts(safePosts);
         setTotalPages(data.totalPages || 1);
-
         setNotFound(safePosts.length === 0);
       } catch (err) {
         console.log(err);
@@ -74,37 +71,41 @@ const Home = () => {
   if (loading) return <CardSkeleton />;
 
   return (
-    <div>
+    <div className="min-h-screen bg-bg text-text px-4 py-6">
 
       {/* SEARCH */}
-      <CreatePostBox
-        search={search}
-        setSearch={(value) => {
-          setPage(1);
-          setSearch(value);
-        }}
-        setPage={setPage}
-        loading={loading}
-      />
+      <div className="mb-4">
+        <CreatePostBox
+          search={search}
+          setSearch={(value) => {
+            setPage(1);
+            setSearch(value);
+          }}
+          setPage={setPage}
+          loading={loading}
+        />
+      </div>
 
       {/* SORT */}
-      <select
-        value={sortBy}
-        onChange={(e) => {
-          setSortBy(e.target.value);
-          setPage(1);
-        }}
-        className="select select-bordered w-full my-2"
-      >
-        <option value="newest">Newest First</option>
-        <option value="oldest">Oldest First</option>
-        <option value="popular">Most Popular</option>
-        <option value="trending">Trending</option>
-      </select>
+      <div className="mb-6">
+        <select
+          value={sortBy}
+          onChange={(e) => {
+            setSortBy(e.target.value);
+            setPage(1);
+          }}
+          className="w-full bg-card border border-muted text-text rounded-lg px-3 py-2 focus:outline-none"
+        >
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
+          <option value="popular">Most Popular</option>
+          <option value="trending">Trending</option>
+        </select>
+      </div>
 
-      {/* EMPTY STATE */}
+      {/* EMPTY */}
       {notFound && !loading && (
-        <div className="text-center py-12">
+        <div className="text-center py-12 text-muted">
           🔍 No posts found
         </div>
       )}
@@ -112,7 +113,7 @@ const Home = () => {
       {/* POSTS */}
       {!notFound && (
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-6 py-6"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
           initial="hidden"
           animate="visible"
           variants={{
@@ -126,6 +127,7 @@ const Home = () => {
                 hidden: { opacity: 0, y: 30 },
                 visible: { opacity: 1, y: 0 },
               }}
+              className="bg-card border border-muted rounded-xl p-3 hover:shadow-md transition"
             >
               <PostCard post={post} />
             </motion.div>
@@ -134,11 +136,11 @@ const Home = () => {
       )}
 
       {/* PAGINATION */}
-      <div className="flex justify-center mt-6 gap-2">
+      <div className="flex justify-center mt-8 gap-2 flex-wrap">
         <button
           disabled={page === 1}
           onClick={() => setPage((p) => p - 1)}
-          className="btn btn-sm"
+          className="px-3 py-1 rounded-lg border border-muted bg-card text-text disabled:opacity-50"
         >
           Prev
         </button>
@@ -147,7 +149,11 @@ const Home = () => {
           <button
             key={num}
             onClick={() => setPage(num + 1)}
-            className={`btn btn-sm ${page === num + 1 ? "btn-primary" : ""}`}
+            className={`px-3 py-1 rounded-lg border ${
+              page === num + 1
+                ? "bg-primary text-white border-primary"
+                : "border-muted bg-card text-text"
+            }`}
           >
             {num + 1}
           </button>
@@ -156,7 +162,7 @@ const Home = () => {
         <button
           disabled={page === totalPages}
           onClick={() => setPage((p) => p + 1)}
-          className="btn btn-sm"
+          className="px-3 py-1 rounded-lg border border-muted bg-card text-text disabled:opacity-50"
         >
           Next
         </button>
