@@ -26,6 +26,11 @@ const Navbar = () => {
           <Link className="hover:text-primary transition" to="/about">About</Link>
           <Link className="hover:text-primary transition" to="/help">Help</Link>
           <Link className="hover:text-primary transition" to="/contact">Contact</Link>
+          {user ? (
+            <Link onClick={() => setOpen(false)} to="/profile">Profile</Link>
+          ) : (
+            <Link onClick={() => setOpen(false)} to="/login">Login</Link>
+          )}
 
           <ThemeToggle />
 
