@@ -28,7 +28,7 @@ const ProfileHeader = ({ user, profile }) => {
     const imageUrl = data.data.url;
 
     // 2. save to MongoDB
-    await fetch("https://codesharebackend-kkeh.onrender.com/users/cover", {
+    await fetch("https://codesharebackend-1.onrender.com/users/cover", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

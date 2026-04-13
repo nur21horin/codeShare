@@ -48,7 +48,7 @@ const Home = () => {
         });
 
         const res = await fetch(
-          `https://codesharebackend-kkeh.onrender.com/posts?${query.toString()}`
+          `https://codesharebackend-1.onrender.com/posts?${query.toString()}`
         );
 
         const data = await res.json();

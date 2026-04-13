@@ -13,7 +13,7 @@ const PostCard = ({ post }) => {
     try {
       setLoading(true);
       const res = await fetch(
-        `https://codesharebackend-kkeh.onrender.com/comments/${post._id}`
+        `https://codesharebackend-1.onrender.com/comments/${post._id}`
       );
       const data = await res.json();
       setComments(Array.isArray(data) ? data : []);
@@ -39,7 +39,7 @@ const PostCard = ({ post }) => {
   const handleLike = async () => {
     try {
       const res = await fetch(
-        `https://codesharebackend-kkeh.onrender.com/posts/like/${post._id}`,
+        `https://codesharebackend-1.onrender.com/posts/like/${post._id}`,
         {
           method: "PATCH",
           headers: {
@@ -62,7 +62,7 @@ const PostCard = ({ post }) => {
     if (!commentText) return;
 
     try {
-      await fetch("https://codesharebackend-kkeh.onrender.com/comments", {
+      await fetch("https://codesharebackend-1.onrender.com/comments", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -93,7 +93,7 @@ const PostCard = ({ post }) => {
 
   const handleDelete = async (id) => {
     try {
-      await fetch(`https://codesharebackend-kkeh.onrender.com/comments/${id}`, {
+      await fetch(`https://codesharebackend-1.onrender.com/comments/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${await user?.getIdToken()}`,

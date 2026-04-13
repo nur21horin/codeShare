@@ -63,7 +63,7 @@ const CreatePost = () => {
         tags: tags.split(",").map((t) => t.trim()),
       };
 
-      const res = await fetch("https://codesharebackend-kkeh.onrender.com/posts", {
+      const res = await fetch("https://codesharebackend-1.onrender.com/posts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

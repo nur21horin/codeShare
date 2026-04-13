@@ -27,7 +27,7 @@ const Profile = () => {
 
       try {
         const res = await fetch(
-          `https://codesharebackend-kkeh.onrender.com/users/${user?.email}`,
+          `https://codesharebackend-1.onrender.com/users/${user?.email}`,
           {
             headers: {
               Authorization: `Bearer ${await user?.getIdToken()}`,
@@ -45,7 +45,7 @@ const Profile = () => {
         setSkills(data?.skills?.map((s) => s.name).join(", ") || "");
 
         // posts (MongoDB)
-        const postRes = await fetch("https://codesharebackend-kkeh.onrender.com/posts");
+        const postRes = await fetch("https://codesharebackend-1.onrender.com/posts");
         const postData = await postRes.json();
         setPosts(postData.posts || []);
       } catch (err) {
@@ -81,7 +81,7 @@ const Profile = () => {
 
       const imageUrl = data.data.url;
 
-      await fetch("https://codesharebackend-kkeh.onrender.com/users/cover", {
+      await fetch("https://codesharebackend-1.onrender.com/users/cover", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -110,7 +110,7 @@ const Profile = () => {
       }))
       .filter((s) => s.name);
 
-    await fetch("https://codesharebackend-kkeh.onrender.com/users/profile", {
+    await fetch("https://codesharebackend-1.onrender.com/users/profile", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
