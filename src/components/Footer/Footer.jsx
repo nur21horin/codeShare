@@ -7,7 +7,7 @@ const Footer = () => {
     localStorage.getItem("theme") || "light"
   );
 
-  const [stats, setStats] = useState({
+  const [stats] = useState({
     users: 1200,
     posts: 5400,
   });
@@ -29,10 +29,9 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="relative mt-12 text-base-content">
+    <footer className="mt-12 bg-bg text-text border-t border-muted">
 
-      {/* GLASS BACKGROUND */}
-      <div className="backdrop-blur-xl bg-base-200/70 border border-base-300 rounded-none transition-all duration-300">
+      <div className="bg-card border border-muted">
 
         <div className="max-w-6xl mx-auto px-6 py-12 grid gap-10 md:grid-cols-3">
 
@@ -42,19 +41,19 @@ const Footer = () => {
               CP Platform
             </h2>
 
-            <p className="mt-3 text-sm text-base-content/70 leading-relaxed">
+            <p className="mt-3 text-sm text-muted leading-relaxed">
               A competitive programming community where developers share
               optimized solutions, learn algorithms, and grow together.
             </p>
 
-            {/* SOCIAL ICONS */}
-            <div className="flex gap-4 mt-5">
+            {/* SOCIAL */}
+            <div className="flex gap-4 mt-5 text-xl">
               {social.map((item, i) => (
                 <motion.div
                   key={i}
                   whileHover={{ scale: 1.2, rotate: 8 }}
                   whileTap={{ scale: 0.9 }}
-                  className="text-2xl cursor-pointer"
+                  className="cursor-pointer text-muted hover:text-primary transition"
                   title={item.label}
                 >
                   {item.icon}
@@ -65,9 +64,11 @@ const Footer = () => {
 
           {/* LINKS */}
           <div>
-            <h3 className="font-semibold mb-3">Quick Links</h3>
+            <h3 className="font-semibold mb-3 text-text">
+              Quick Links
+            </h3>
 
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-2 text-sm text-muted">
               <li><Link className="hover:text-primary" to="/">Home</Link></li>
               <li><Link className="hover:text-primary" to="/createpost">Create</Link></li>
               <li><Link className="hover:text-primary" to="/profile">Profile</Link></li>
@@ -78,14 +79,14 @@ const Footer = () => {
           {/* RIGHT SIDE */}
           <div className="space-y-5">
 
-            {/* THEME TOGGLE */}
+            {/* THEME */}
             <div className="flex items-center justify-between">
-              <span className="font-semibold">Theme</span>
+              <span className="font-semibold text-text">Theme</span>
 
               <motion.button
                 onClick={toggleTheme}
                 whileTap={{ scale: 0.9 }}
-                className="px-4 py-2 rounded-full bg-base-300 hover:bg-base-100 transition"
+                className="px-4 py-2 rounded-full bg-bg border border-muted text-text hover:bg-card transition"
               >
                 {theme === "light" ? "🌙 Dark" : "☀️ Light"}
               </motion.button>
@@ -93,25 +94,28 @@ const Footer = () => {
 
             {/* STATS */}
             <div className="grid grid-cols-2 gap-3 text-center">
-              <div className="p-3 rounded-xl bg-base-300/40">
+
+              <div className="p-3 rounded-xl bg-bg border border-muted">
                 <p className="text-lg font-bold text-primary">
                   {stats.users}+
                 </p>
-                <p className="text-xs">Users</p>
+                <p className="text-xs text-muted">Users</p>
               </div>
 
-              <div className="p-3 rounded-xl bg-base-300/40">
+              <div className="p-3 rounded-xl bg-bg border border-muted">
                 <p className="text-lg font-bold text-primary">
                   {stats.posts}+
                 </p>
-                <p className="text-xs">Posts</p>
+                <p className="text-xs text-muted">Posts</p>
               </div>
+
             </div>
           </div>
+
         </div>
 
-        {/* BOTTOM BAR */}
-        <div className="border-t border-base-300 text-center py-4 text-sm text-base-content/60">
+        {/* BOTTOM */}
+        <div className="border-t border-muted text-center py-4 text-sm text-muted">
           © {new Date().getFullYear()} CP Platform — Built for competitive programmers ⚡
         </div>
 
