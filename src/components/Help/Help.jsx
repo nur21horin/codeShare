@@ -7,8 +7,9 @@ import { motion } from "framer-motion";
 
 const lines = [
   <span className="flex items-center justify-center gap-2">
-  <FaHeadset className="text-primary" />
+  
   We’re here to help you 24/7
+  <FaHeadset className="text-primary" />
 </span>,
   "Explore FAQs for quick answers",
   "Get instant support from our team",
