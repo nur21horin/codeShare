@@ -127,7 +127,7 @@ const Home = () => {
                 hidden: { opacity: 0, y: 30 },
                 visible: { opacity: 1, y: 0 },
               }}
-              className="bg-card border border-muted rounded-xl p-3 hover:shadow-md transition"
+              className="bg-card  rounded-xl p-3 hover:shadow-amber-900 transition"
             >
               <PostCard post={post} />
             </motion.div>

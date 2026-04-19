@@ -73,7 +73,7 @@ const PostCard = ({ post }) => {
   };
 
   return (
-    <div className="bg-card border border-muted rounded-2xl shadow-md overflow-hidden flex flex-col h-[520px] hover:scale-[1.02] transition">
+    <div className="bg-card  rounded-2xl shadow-md overflow-hidden flex flex-col h-[520px] hover:shadow-2xl transition duration-300 hover:scale-[1.02] transition">
 
       {/* IMAGE */}
       <img
@@ -81,7 +81,7 @@ const PostCard = ({ post }) => {
         className="w-full h-40 object-cover"
       />
 
-      <div className="p-4 flex flex-col flex-grow space-y-3">
+      <div className="p-4 flex  flex-col flex-grow space-y-3">
 
         {/* USER */}
         <div className="flex items-center gap-3">
