@@ -73,12 +73,12 @@ const PostCard = ({ post }) => {
   };
 
   return (
-    <div className="bg-card shadow-green-500  rounded-2xl shadow-md overflow-hidden flex flex-col h-[520px] hover:shadow-2xl duration-300 hover:scale-[1.02] transition">
+    <div className="bg-card shadow-green-500    rounded-2xl shadow-md overflow-hidden flex flex-col h-[520px] hover:shadow-2xl duration-300 hover:scale-[1.02] transition">
 
       {/* IMAGE */}
       <img
         src={post.image || "https://i.ibb.co/2kR6z6n/user.png"}
-        className="w-full h-40 object-cover"
+        className="w-full h-55  object-cover"
       />
 
       <div className="p-4 flex  flex-col flex-grow space-y-3">

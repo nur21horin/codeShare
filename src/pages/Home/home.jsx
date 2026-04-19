@@ -4,6 +4,16 @@ import PostCard from "./postCard";
 import CreatePostBox from "./createPostBox";
 import CardSkeleton from "../../components/CardSekelton/CardSkeleton";
 import { motion } from "framer-motion";
+import SortDropdown from "./Options";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+
+
+const options = [
+  { label: "Newest", value: "newest" },
+
+  { label: "Popular", value: "popular" },
+
+];
 
 const Home = () => {
   const axiosSecure = useAxiosSecure();
@@ -86,22 +96,32 @@ const Home = () => {
         />
       </div>
 
-      {/* SORT */}
-      <div className="mb-6">
-        <select
-          value={sortBy}
-          onChange={(e) => {
-            setSortBy(e.target.value);
-            setPage(1);
-          }}
-          className="w-full bg-card border border-muted text-text rounded-lg px-3 py-2 focus:outline-none"
-        >
-          <option value="newest">Newest First</option>
-          <option value="oldest">Oldest First</option>
-          <option value="popular">Most Popular</option>
-          <option value="trending">Trending</option>
-        </select>
-      </div>
+      {/* SORT + FILTER */}
+      <div className="flex gap-2 mb-6">
+
+  {options.map((opt) => (
+    <button
+      key={opt.value}
+      onClick={() => {
+        setSortBy(opt.value);
+        setPage(1);
+      }}
+      className={`
+        px-4 py-2 rounded-full text-sm transition
+        border border-muted
+        ${
+          sortBy === opt.value
+            ? "bg-primary text-white shadow-md"
+            : "bg-card text-text hover:bg-muted"
+        }
+      `}
+    >
+      {opt.label}
+    </button>
+  ))}
+  
+
+</div>
 
       {/* EMPTY */}
       {notFound && !loading && (
@@ -136,37 +156,90 @@ const Home = () => {
       )}
 
       {/* PAGINATION */}
-      <div className="flex justify-center mt-8 gap-2 flex-wrap">
-        <button
-          disabled={page === 1}
-          onClick={() => setPage((p) => p - 1)}
-          className="px-3 py-1 rounded-lg border border-muted bg-card text-text disabled:opacity-50"
-        >
-          Prev
-        </button>
+    <div className="flex justify-center mt-8 items-center gap-3">
 
-        {[...Array(totalPages).keys()].map((num) => (
-          <button
-            key={num}
-            onClick={() => setPage(num + 1)}
-            className={`px-3 py-1 rounded-lg border ${
-              page === num + 1
-                ? "bg-primary text-white border-primary"
-                : "border-muted bg-card text-text"
-            }`}
-          >
-            {num + 1}
-          </button>
-        ))}
+  {/* PREV BUTTON */}
+  <motion.button
+    whileTap={{ scale: 0.9 }}
+    whileHover={{ scale: 1.05 }}
+    disabled={page === 1}
+    onClick={() => setPage((p) => p - 1)}
+    className="
+      flex items-center gap-1
+      px-3 py-2 rounded-lg
+      bg-card text-text border border-muted
+      disabled:opacity-40 disabled:cursor-not-allowed
+      hover:bg-muted transition
+    "
+  >
+    <FaChevronLeft />
+    Prev
+  </motion.button>
 
-        <button
-          disabled={page === totalPages}
-          onClick={() => setPage((p) => p + 1)}
-          className="px-3 py-1 rounded-lg border border-muted bg-card text-text disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
+  {/* PREVIOUS PAGE NUMBER */}
+  {page > 1 && (
+    <motion.button
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      onClick={() => setPage(page - 1)}
+      className="
+        px-3 py-2 rounded-lg
+        border border-muted
+        bg-card text-text
+        hover:bg-muted transition
+      "
+    >
+      {page - 1}
+    </motion.button>
+  )}
+
+  {/* CURRENT PAGE */}
+  <motion.button
+    animate={{ scale: 1.1 }}
+    className="
+      px-3 py-2 rounded-lg
+      bg-primary text-white shadow-lg
+    "
+  >
+    {page}
+  </motion.button>
+
+  {/* NEXT PAGE NUMBER */}
+  {page < totalPages && (
+    <motion.button
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      onClick={() => setPage(page + 1)}
+      className="
+        px-3 py-2 rounded-lg
+        border border-muted
+        bg-card text-text
+        hover:bg-muted transition
+      "
+    >
+      {page + 1}
+    </motion.button>
+  )}
+
+  {/* NEXT BUTTON */}
+  <motion.button
+    whileTap={{ scale: 0.9 }}
+    whileHover={{ scale: 1.05 }}
+    disabled={page === totalPages}
+    onClick={() => setPage((p) => p + 1)}
+    className="
+      flex items-center gap-1
+      px-3 py-2 rounded-lg
+      bg-card text-text border border-muted
+      disabled:opacity-40 disabled:cursor-not-allowed
+      hover:bg-muted transition
+    "
+  >
+    Next
+    <FaChevronRight />
+  </motion.button>
+
+</div>
 
     </div>
   );
