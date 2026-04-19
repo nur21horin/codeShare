@@ -1,50 +1,72 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import ThemeToggle from "../../Theme/ThemeToggle";
 
+// icons
+import { FaHome, FaPlus, FaInfoCircle, FaQuestionCircle, FaPhone, FaUser, FaCodeBranch, FaCode } from "react-icons/fa";
+import { SiCodesandbox } from "react-icons/si";
 
 const Navbar = () => {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
 
+  // active style function
+  const activeClass = ({ isActive }) =>
+    isActive
+      ? "text-primary font-semibold"
+      : "text-text hover:text-primary transition";
+
   return (
-    <div className="sticky top-0 z-50 backdrop-blur-md bg-card/80 border-b border-muted shadow-sm">
+    <div className="sticky top-0 z-50 backdrop-blur-md bg-card/80 border-b border-dotted shadow-amber-400  shadow-sm">
 
       <div className="flex justify-between items-center px-4 py-3">
 
         {/* LOGO */}
-        <Link to="/" className="text-xl font-bold text-primary">
+        <NavLink to="/" className="text-xl flex items-center gap-1.5 font-bold text-primary">
+        < FaCode className="text-2xl" />
           CodeShare
-        </Link>
+        </NavLink>
 
         {/* DESKTOP MENU */}
-        <div className="hidden md:flex gap-6 items-center text-sm text-text">
+        <div className="hidden md:flex gap-6 items-center text-sm">
 
-          <Link className="hover:text-primary transition" to="/">Home</Link>
-          <Link className="hover:text-primary transition" to="/createpost">Create</Link>
-          <Link className="hover:text-primary transition" to="/about">About</Link>
-          <Link className="hover:text-primary transition" to="/help">Help</Link>
-          <Link className="hover:text-primary transition" to="/contact">Contact</Link>
+          <NavLink to="/" className={activeClass}>
+            <FaHome className="inline mr-1" /> Home
+          </NavLink>
+
+          <NavLink to="/createpost" className={activeClass}>
+            <FaPlus className="inline mr-1" /> Add
+          </NavLink>
+
+          <NavLink to="/about" className={activeClass}>
+            <FaInfoCircle className="inline mr-1" /> About
+          </NavLink>
+
+          <NavLink to="/help" className={activeClass}>
+            <FaQuestionCircle className="inline mr-1" /> Help
+          </NavLink>
+
+          <NavLink to="/contact" className={activeClass}>
+            <FaPhone className="inline mr-1" /> Contact
+          </NavLink>
+
           {user ? (
-            <Link onClick={() => setOpen(false)} to="/profile">Profile</Link>
+            <NavLink to="/profile" className={activeClass}>
+              <FaUser className="inline mr-1" /> Profile
+            </NavLink>
           ) : (
-            <Link onClick={() => setOpen(false)} to="/login">Login</Link>
+            <NavLink to="/login" className={activeClass}>
+              Login
+            </NavLink>
           )}
 
           <ThemeToggle />
 
-          {/* USER */}
+          {/* USER BADGE */}
           <div className="ml-2 px-3 py-1 rounded-full bg-secondary text-white text-xs">
             {user ? user.displayName : "Guest"}
           </div>
-          {user ? (
-              <div className="ml-2 px-3 py-1 rounded-full bg-secondary text-white text-xs">
-                <Link onClick={() => setOpen(false)} to="/logout">Logout</Link>
-              </div>
-            ) : (
-              <Link className="ml-2 px-3 py-1 rounded-full bg-secondary text-white text-xs" to="/login">Login</Link>
-            )}
 
         </div>
 
@@ -62,29 +84,42 @@ const Navbar = () => {
       {open && (
         <div className="md:hidden px-4 pb-4 flex flex-col gap-3 text-sm bg-card border-t border-muted">
 
-          <Link onClick={() => setOpen(false)} to="/">Home</Link>
-          <Link onClick={() => setOpen(false)} to="/createpost">Create</Link>
-          <Link onClick={() => setOpen(false)} to="/about">About</Link>
-          <Link onClick={() => setOpen(false)} to="/help">Help</Link>
-          <Link onClick={() => setOpen(false)} to="/contact">Contact</Link>
+          <NavLink onClick={() => setOpen(false)} to="/" className={activeClass}>
+            <FaHome className="inline mr-1" /> Home
+          </NavLink>
+
+          <NavLink onClick={() => setOpen(false)} to="/createpost" className={activeClass}>
+            <FaPlus className="inline mr-1" /> Create
+          </NavLink>
+
+          <NavLink onClick={() => setOpen(false)} to="/about" className={activeClass}>
+            <FaInfoCircle className="inline mr-1" /> About
+          </NavLink>
+
+          <NavLink onClick={() => setOpen(false)} to="/help" className={activeClass}>
+            <FaQuestionCircle className="inline mr-1" /> Help
+          </NavLink>
+
+          <NavLink onClick={() => setOpen(false)} to="/contact" className={activeClass}>
+            <FaPhone className="inline mr-1" /> Contact
+          </NavLink>
+
           {user ? (
-            <Link onClick={() => setOpen(false)} to="/profile">Profile</Link>
+            <NavLink onClick={() => setOpen(false)} to="/profile" className={activeClass}>
+              <FaUser className="inline mr-1" /> Profile
+            </NavLink>
           ) : (
-            <Link onClick={() => setOpen(false)} to="/login">Login</Link>
+            <NavLink onClick={() => setOpen(false)} to="/login" className={activeClass}>
+              Login
+            </NavLink>
           )}
-          
+
           <div className="pt-2 flex justify-between items-center">
             <ThemeToggle />
 
             <span className="text-xs text-muted">
-              {user ? user.email  : "Not logged in"}
-
+              {user ? user.email : "Not logged in"}
             </span>
-            {user && (
-              <div className="ml-2 px-3 py-1 rounded-full bg-secondary text-white text-xs">
-                <Link onClick={() => setOpen(false)} to="/logout">Logout</Link>
-              </div>
-            )}
           </div>
 
         </div>
