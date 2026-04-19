@@ -73,7 +73,7 @@ const PostCard = ({ post }) => {
   };
 
   return (
-    <div className="bg-card  rounded-2xl shadow-md overflow-hidden flex flex-col h-[520px] hover:shadow-2xl transition duration-300 hover:scale-[1.02] transition">
+    <div className="bg-card shadow-green-500  rounded-2xl shadow-md overflow-hidden flex flex-col h-[520px] hover:shadow-2xl duration-300 hover:scale-[1.02] transition">
 
       {/* IMAGE */}
       <img

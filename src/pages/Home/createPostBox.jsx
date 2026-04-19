@@ -13,7 +13,7 @@ const CreatePostBox = ({ search, setSearch, setPage, loading }) => {
   }, [search]);
 
   return (
-    <div className="sticky top-0 z-50 bg-card  rounded-xl p-4 shadow-md space-y-4">
+    <div className="sticky top-0 z-50 bg-card  rounded-xl p-4 shadow-lg space-y-4">
 
       {/* SEARCH BOX */}
       <div className="relative w-full">
@@ -28,7 +28,7 @@ const CreatePostBox = ({ search, setSearch, setPage, loading }) => {
             setSearch(e.target.value);
             setPage(1);
           }}
-          className="w-full bg-bg border border-muted text-text placeholder:text-muted rounded-lg pl-10 pr-10 py-2 focus:outline-none"
+          className="w-full bg-card shadow-green-500  p-6 rounded-xl shadow-md hover:shadow-2xl transition duration-300 text-text placeholder:text-muted  pl-10 pr-10 py-2 focus:outline-none text-duration-300"
         />
 
         {/* LOADING */}
