@@ -2,11 +2,14 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 // icons
-import { FaQuestionCircle, FaBolt, FaEnvelope, FaArrowRight } from "react-icons/fa";
+import { FaQuestionCircle, FaBolt, FaEnvelope, FaArrowRight, FaHeadset } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 const lines = [
-  "We’re here to help you 24/7",
+  <span className="flex items-center justify-center gap-2">
+  <FaHeadset className="text-primary" />
+  We’re here to help you 24/7
+</span>,
   "Explore FAQs for quick answers",
   "Get instant support from our team",
   "Contact us for any issue within 24h",
