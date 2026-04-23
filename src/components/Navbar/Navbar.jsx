@@ -4,8 +4,9 @@ import useAuth from "../../hooks/useAuth";
 import ThemeToggle from "../../Theme/ThemeToggle";
 
 // icons
-import { FaHome, FaPlus, FaInfoCircle, FaQuestionCircle, FaPhone, FaUser, FaCodeBranch, FaCode } from "react-icons/fa";
+import { FaHome, FaPlus, FaInfoCircle, FaQuestionCircle, FaPhone, FaUser, FaCodeBranch, FaCode, FaSignOutAlt } from "react-icons/fa";
 import { SiCodesandbox } from "react-icons/si";
+import { FiLogOut } from "react-icons/fi";
 
 const Navbar = () => {
   const { user } = useAuth();
@@ -52,9 +53,17 @@ const Navbar = () => {
           </NavLink>
 
           {user ? (
+            <div className="flex items-center gap-4">
             <NavLink to="/profile" className={activeClass}>
               <FaUser className="inline mr-1" /> Profile
             </NavLink>
+
+            <NavLink onClick={() => setOpen(false)} to="/logout"  className="flex items-center gap-1 text-red-500 hover:text-red-600 transition">
+              <FaSignOutAlt className="inline mr-1" /> Logout
+            </NavLink>
+
+            </div>
+            
           ) : (
             <NavLink to="/login" className={activeClass}>
               Login
@@ -104,10 +113,15 @@ const Navbar = () => {
             <FaPhone className="inline mr-1" /> Contact
           </NavLink>
 
-          {user ? (
+          {user ? (<div className="flex items-center gap-4 ">
+
             <NavLink onClick={() => setOpen(false)} to="/profile" className={activeClass}>
               <FaUser className="inline mr-1" /> Profile
             </NavLink>
+            <NavLink onClick={() => setOpen(false)} to="/logout"  className="flex items-center gap-1 text-red-500 hover:text-red-600 transition">
+             <FiLogOut className="inline mr-1" /> Logout
+            </NavLink>
+            </div>
           ) : (
             <NavLink onClick={() => setOpen(false)} to="/login" className={activeClass}>
               Login
